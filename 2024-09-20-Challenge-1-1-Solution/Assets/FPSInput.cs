@@ -10,11 +10,13 @@ using UnityEngine;
 public class FPSInput : MonoBehaviour
 {
 	public float gravity = -9.8f;
-	public float walkSpeed = 6.0f;
+	public float walkSpeed = 6f;
 	public float sprintSpeed = 12f;
 	public float crouchSpeed = 3f;
 	public float crouchHeight = 1f;
 	public KeyCode crouchKey = KeyCode.C;
+public float zoomFOV = 30f; // Adjust this value to set the desired zoom FOV
+    public float zoomSpeed = 5f; // Adjust this value to set the zoom transition speed
 
 	// "private" access-control keyword used because these variables are managed internally to the script
 	// i.e. they don't need to be accessed by other scripts or edited in the inspector (and actually it's very
@@ -24,12 +26,16 @@ public class FPSInput : MonoBehaviour
 	private float originalHeight;
 	private Vector3 originalCenter;
 	private CharacterController charController;
+	private Camera playerCamera;
+    private float originalFOV;
 
 	void Start()
 	{
 		charController = GetComponent<CharacterController>();
 		originalHeight = charController.height;
 		originalCenter = charController.center;
+		playerCamera = Camera.main;
+        originalFOV = playerCamera.fieldOfView;
 	}
 
 	void Update()
@@ -65,7 +71,18 @@ public class FPSInput : MonoBehaviour
 			charController.center = originalCenter;
 		}
 
-		//transform.Translate(Input.GetAxis("Horizontal") * speed * Time.deltaTime, 0, Input.GetAxis("Vertical") * speed * Time.deltaTime);
+		if (Input.GetMouseButton(1))
+        {
+            // Zoom in
+            playerCamera.fieldOfView = Mathf.Lerp(playerCamera.fieldOfView, zoomFOV, zoomSpeed * Time.deltaTime);
+        }
+        else
+        {
+            // Zoom out
+            playerCamera.fieldOfView = Mathf.Lerp(playerCamera.fieldOfView, originalFOV, zoomSpeed * Time.deltaTime);
+        }
+
+		
 		float deltaX = Input.GetAxis("Horizontal") * speed;
 		float deltaZ = Input.GetAxis("Vertical") * speed;
 		Vector3 movement = new Vector3(deltaX, 0, deltaZ);
