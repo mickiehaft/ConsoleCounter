@@ -8,8 +8,10 @@ using UnityEngine;
 [RequireComponent(typeof(CharacterController))]
 [AddComponentMenu("Control Script/FPS Input")]
 public class FPSInput : MonoBehaviour {
-	public float speed = 6.0f;
 	public float gravity = -9.8f;
+	public float walkSpeed = 6.0f;
+	public float sprintSpeed = 12f;
+	private float speed;
 
 	private CharacterController charController;
 	
@@ -18,6 +20,12 @@ public class FPSInput : MonoBehaviour {
 	}
 	
 	void Update() {
+		if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) {
+			speed = sprintSpeed;
+		} else {
+			speed = walkSpeed;
+		}
+
 		//transform.Translate(Input.GetAxis("Horizontal") * speed * Time.deltaTime, 0, Input.GetAxis("Vertical") * speed * Time.deltaTime);
 		float deltaX = Input.GetAxis("Horizontal") * speed;
 		float deltaZ = Input.GetAxis("Vertical") * speed;
